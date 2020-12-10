@@ -1,0 +1,2 @@
+*.geojson !text !filter !merge !diff
+*.asc !text !filter !merge !diff
