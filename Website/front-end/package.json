@@ -1,0 +1,16 @@
+{
+  "name": "casa0017-assessment",
+  "private": true,
+  "devDependencies": {
+    "vite": "^5.4.21"
+  },
+  "scripts": {
+    "dev": "vite --open /front-end/homepage/index.html",
+    "preview": "vite preview --open /front-end/homepage/index.html"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.2.0",
+    "@tweenjs/tween.js": "^25.0.0",
+    "three": "^0.180.0"
+  }
+}
