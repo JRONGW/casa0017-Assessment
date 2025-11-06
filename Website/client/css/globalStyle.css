@@ -1,0 +1,137 @@
+/* -------------------- */
+/* RESET (makes browsers consistent) */
+/* -------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Copperplate' ,'fantasy';
+  background-color: #f7f9fb;
+  color: rgb(1, 107, 97);
+  line-height: 1.6;
+}
+
+/* -------------------- */
+/* LAYOUT */
+/* -------------------- */
+
+/* Centers the whole page content and adds some breathing space */
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  background-color:rgb(1, 107, 97);
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Navigation bar inside header */
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* -------------------- */
+/* MAIN SECTIONS */
+/* -------------------- */
+
+/* Hero section at the top (the globe area) */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background-color:rgb(112, 178, 178);
+}
+
+.hero h1 {
+  font-size: 2em;
+  color: rgb(19, 36, 64);
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: #333;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* -------------------- */
+/* COUNTRY CARDS */
+/* -------------------- */
+.countries {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.country {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.country h2 {
+  color: rgb(19, 36, 64);
+  margin-bottom: 10px;
+}
+
+/* -------------------- */
+/* FOOTER */
+/* -------------------- */
+footer {
+  text-align: center;
+  background-color:rgb(229, 233, 197);
+  padding: 20px 0;
+  font-size: 0.9em;
+  color: #555;
+}
+
+
+/* Make the page take up the whole height of the screen */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Push the footer to the bottom */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Let the middle part grow */
+.countries {
+  flex: 1;
+}
+
+/* Make hero section fill more of the screen */
+.hero {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Make header, hero, and footer full width */
+header, .hero, footer {
+  width: 100%;
+}
