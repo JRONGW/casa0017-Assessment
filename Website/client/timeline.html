@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- Make the page look good on phones and laptops -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Country Maps</title>
+
+    <!-- Leaflet styles and script (for interactive maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Your own CSS file -->
+    <link rel="stylesheet" href="./css/style.css" />
+
+    <!-- Your JavaScript file. "defer" waits until HTML is parsed. -->
+    <script src="./js/function.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Top bar: user controls
+       - A simple dropdown to choose the metric -->
+
+    <div class="controls" aria-label="top controls">
+        <label>
+            Metric:
+            <select id="metricSel">
+                <!-- Each option corresponds to one dataset/metric -->
+                <option value="air">Air quality (↑=better)</option>
+                <option value="forest">Forest cover (↑=more)</option>
+                <option value="water">Water quality (↑=better)</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- Page title under the top bar -->
+    <div class="page-title">Environmental Quality Comparison</div>
+
+
+    <!-- Main layout: two columns
+       - Left: vertical color legend
+       - Right: maps + money stacks -->
+
+    <div class="layout">
+        <!-- ===== Left column: legend ===== -->
+        <!-- The legend shows the color scale from 1.0 to 0.0 -->
+        <aside class="legend-col">
+            <div id="legend" aria-label="color legend">
+                <!-- Color bar (the gradient background is set in JS) -->
+                <div id="legendBar"></div>
+
+                <!-- Tick labels for the legend (top to bottom) -->
+                <div id="legendTicks">
+                    <span>1.0</span><span>0.75</span><span>0.50</span><span>0.25</span><span>0.00</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right column: content card -->
+        <!-- White card that contains the three maps and the money stacks -->
+        <main class="maps-row">
+            <!-- Row of three country maps -->
+            <div class="maps-inline">
+                <!-- Country block #1 -->
+                <div class="map-block">
+                    <div class="map-title">Brazil</div>
+                    <!-- Leaflet will render the country shape inside this div -->
+                    <div id="map-brazil" class="map big" role="img" aria-label="Map of Brazil"></div>
+                </div>
+
+                <!-- Country block #2 -->
+                <div class="map-block">
+                    <div class="map-title">Poland</div>
+                    <div id="map-poland" class="map big" role="img" aria-label="Map of Poland"></div>
+                </div>
+
+                <!-- Country block #3 -->
+                <div class="map-block">
+                    <div class="map-title">South Korea</div>
+                    <div id="map-korea" class="map big" role="img" aria-label="Map of South Korea"></div>
+                </div>
+            </div>
+
+            <!-- Horizontal “money stacks” row (one per country) JS will insert multiple small images to show amount -->
+            <div class="cash-row" aria-label="money stacks">
+                <div class="cash">
+                    <div class="cash-stack" id="stack-Brazil" aria-label="Brazil money stack"></div>
+                </div>
+
+                <div class="cash">
+                    <div class="cash-stack" id="stack-Poland" aria-label="Poland money stack"></div>
+                </div>
+
+                <div class="cash">
+                    <div class="cash-stack" id="stack-South-Korea" aria-label="South Korea money stack"></div>
+                </div>
+            </div>
+        </main>
+    </div> <!-- /.layout -->
+
+
+    <!-- Timeline (Year slider)
+       - Placed outside the white card
+       - Centered below the maps -->
+
+    <div class="timeline layout-timeline" aria-label="year timeline">
+        <span class="timeline__label">
+            Year: <b id="yearVal">2005</b>
+        </span>
+
+        <!-- The slider value is connected to the maps via JS -->
+        <input id="yearInput" class="timeline__range" type="range" min="2000" max="2020" step="5" value="2005"
+            aria-label="select year" />
+    </div>
+
+    <div class="page-title">Web Architecture Project by Xinyuan Sun</div>
+
+</body>
+
+</html>
