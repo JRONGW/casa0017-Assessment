@@ -12,10 +12,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Your own CSS file -->
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/timeline.css" />
 
     <!-- Your JavaScript file. "defer" waits until HTML is parsed. -->
-    <script src="./js/function.js" defer></script>
+    <script src="./js/utils/timeline.js" defer></script>
 </head>
 
 <body>
@@ -30,7 +30,7 @@
                 <!-- Each option corresponds to one dataset/metric -->
                 <option value="air">Air quality (↑=better)</option>
                 <option value="forest">Forest cover (↑=more)</option>
-                <option value="water">Water quality (↑=better)</option>
+                <option value="co2">CO₂ per capita (↑=better when lower)</option>
             </select>
         </label>
     </div>
@@ -107,14 +107,13 @@
 
     <div class="timeline layout-timeline" aria-label="year timeline">
         <span class="timeline__label">
-            Year: <b id="yearVal">2005</b>
+            Year: <b id="yearVal">2000</b>
         </span>
 
         <!-- The slider value is connected to the maps via JS -->
-        <input id="yearInput" class="timeline__range" type="range" min="2000" max="2020" step="5" value="2005"
+        <input id="yearInput" class="timeline__range" type="range" min="1990" max="2020" step="1" value="2000"
             aria-label="select year" />
     </div>
-
     <div class="page-title">Web Architecture Project by Xinyuan Sun</div>
 
 </body>
