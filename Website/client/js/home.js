@@ -229,13 +229,16 @@ LINE2_MATERIALS.push(selectedGlowMat2);
   // Pick your label styling in one place
   const LABEL_FONT_SIZE = 16;
   const LABEL_FONT_WEIGHT = 200;      // 600  semi-bold; 400 = normal
+  const LABEL_FONT_FAMILY = `"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+
   const LABEL_WORLD_HEIGHT = 0.10;
   const LABEL_UNDERLINE_THICKNESS = 1;
   const LABEL_PADDING_X = 4, LABEL_PADDING_Y = 3;
 
   function drawLabelTexture(text, hovered = false) {
     const colors = hovered ? LABEL_HOVER : LABEL_NORMAL;
-    const font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px Georgia, serif`;
+    const font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px ${LABEL_FONT_FAMILY}`;
+
 
     const c = document.createElement("canvas");
     const ctx = c.getContext("2d");
@@ -476,7 +479,7 @@ LINE2_MATERIALS.push(selectedGlowMat2);
         lonHelper.rotation.y = THREE.MathUtils.degToRad(lon) + lonFudge;
         latHelper.rotation.x = THREE.MathUtils.degToRad(lat) + latFudge;
 
-        positionHelper.scale.set(0.005, 0.005, THREE.MathUtils.lerp(0.000001, 0.02, t));
+        positionHelper.scale.set(0.005, 0.005, THREE.MathUtils.lerp(0.000001, 0.03, t));
         originHelper.updateWorldMatrix(true, false);
         geometry.applyMatrix4(originHelper.matrixWorld);
 
@@ -516,9 +519,9 @@ LINE2_MATERIALS.push(selectedGlowMat2);
   async function loadAll() {
     const rasters = [
       // Tree cover: light at green
-      { key: "tree", name: "Tree Cover in 2000", hueRange: [0, 0], url: TREECOVER_DATA_URL, opts: { colorRampColors: ["#F7FBEA", "#CBEAA6"] } },
+      { key: "tree", name: "Tree Cover in 2000", hueRange: [0, 0], url: TREECOVER_DATA_URL, opts: { colorRampColors: ["rgba(207, 215, 174, 1)", "rgba(195, 207, 109, 1)"] } },
       // GDP: light at deep purple
-      { key: "gdpasc", name: "GDP 2000 (ASC)", hueRange: [0, 0], url: GDP_ASC_URL, opts: { colorRampColors: ["#D9BFD6", "#3A0D3E"] } }
+      { key: "gdpasc", name: "GDP 2000", hueRange: [0, 0], url: GDP_ASC_URL, opts: { colorRampColors: ["#D9BFD6", "#3A0D3E"] } }
     ];
     await Promise.all(rasters.map(async r => { r.file = parseData(await loadFile(r.url)); }));
 
@@ -535,7 +538,7 @@ LINE2_MATERIALS.push(selectedGlowMat2);
     const uiElem = document.querySelector("#list");
     const layers = [
       { kind: "asc", key: "tree", name: "Tree Cover in 2000" },
-      { kind: "asc", key: "gdpasc", name: "GDP 2000 (ASC)" }
+      { kind: "asc", key: "gdpasc", name: "GDP 2000" }
     ];
 
     async function selectLayer(layer) {
@@ -669,4 +672,3 @@ LINE2_MATERIALS.push(selectedGlowMat2);
 }
 
 main();
-

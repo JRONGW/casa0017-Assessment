@@ -1,30 +1,70 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Three.js - Simulate World Characteristics</title>
-    <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
+  <title>Equilibrium — Growth vs Environment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Main styles (includes Poppins import and pill header/footer rules) -->
+  <link rel="stylesheet" href="/css/home.css" />
 </head>
-
 <body>
-    <link rel="stylesheet" href="/css/home.css" />
-    <canvas id="c"></canvas>
-    <div id="title">
-        Can economic growth sustain without the deterioration of environments?
-    </div>
-    <div id="currentInfo">
-        <ul id="list"></ul>
-    </div>
-    <div id="linkGroup">
-        <a href="https://github.com/ChengJu1/casa0017-Assessment" target="_blank" rel="noopener noreferrer">
-            <span>Group Github Website</span>
-        </a>
-        <div id="divider"></div>
-        <a href="" target="_blank">
-            <span>Group Member</span>
-        </a>
-    </div>
-    <script type="module" src="/js/home.js"></script>
-</body>
 
+  <!-- Pill Header -->
+  <header class="pill-bar header">
+    <div class="pill-inner">
+      <div class="left"></div>
+
+      <div class="center">
+        <h1 class="site-title">Equilibrium</h1>
+        <nav class="site-nav">
+          <a href="#">Home</a>
+          <a href="/about.html">About</a>
+          <a href="/timeline.html">Timeline</a>
+        </nav>
+      </div>
+
+      <div class="right"></div>
+      <!-- (hamburger removed) -->
+    </div>
+  </header>
+
+  <!-- Three.js canvas (background) -->
+  <canvas id="c"></canvas>
+
+  <!-- Title & info overlays -->
+  <div id="title">
+    Can <span class="accent">economic growth</span> sustain without the deterioration of <span class="accent">environments</span>?
+  </div>
+
+
+  <div id="currentInfo">
+    <ul id="list"><!-- JS populates: “Tree Cover in 2000”, “GDP 2000 (ASC)” --></ul>
+  </div>
+
+  <!-- Bottom links -->
+
+
+  <!-- Pill Footer -->
+  <footer class="pill-bar footer">
+  <div class="pill-inner">
+        <div class="left"></div>
+
+        <div class="center">
+        <div class="footer-title">CASA 0017</div>
+        <nav class="footer-links" aria-label="Footer links">
+            <a href="https://github.com/ChengJu1/casa0017-Assessment" target="_blank" rel="noopener noreferrer">
+            Group Github Website
+            </a>
+        </nav>
+        </div>
+
+        <div class="right"></div>
+  </div>
+  </footer>
+
+
+  <!-- App script -->
+  <script type="module" src="/js/home.js"></script>
+</body>
 </html>
