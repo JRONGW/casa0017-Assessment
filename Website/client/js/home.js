@@ -479,7 +479,7 @@ LINE2_MATERIALS.push(selectedGlowMat2);
         lonHelper.rotation.y = THREE.MathUtils.degToRad(lon) + lonFudge;
         latHelper.rotation.x = THREE.MathUtils.degToRad(lat) + latFudge;
 
-        positionHelper.scale.set(0.005, 0.005, THREE.MathUtils.lerp(0.000001, 0.02, t));
+        positionHelper.scale.set(0.005, 0.005, THREE.MathUtils.lerp(0.000001, 0.03, t));
         originHelper.updateWorldMatrix(true, false);
         geometry.applyMatrix4(originHelper.matrixWorld);
 
@@ -519,9 +519,9 @@ LINE2_MATERIALS.push(selectedGlowMat2);
   async function loadAll() {
     const rasters = [
       // Tree cover: light at green
-      { key: "tree", name: "Tree Cover in 2000", hueRange: [0, 0], url: TREECOVER_DATA_URL, opts: { colorRampColors: ["#F7FBEA", "#CBEAA6"] } },
+      { key: "tree", name: "Tree Cover in 2000", hueRange: [0, 0], url: TREECOVER_DATA_URL, opts: { colorRampColors: ["rgba(207, 215, 174, 1)", "rgba(195, 207, 109, 1)"] } },
       // GDP: light at deep purple
-      { key: "gdpasc", name: "GDP 2000 (ASC)", hueRange: [0, 0], url: GDP_ASC_URL, opts: { colorRampColors: ["#D9BFD6", "#3A0D3E"] } }
+      { key: "gdpasc", name: "GDP 2000", hueRange: [0, 0], url: GDP_ASC_URL, opts: { colorRampColors: ["#D9BFD6", "#3A0D3E"] } }
     ];
     await Promise.all(rasters.map(async r => { r.file = parseData(await loadFile(r.url)); }));
 
@@ -538,7 +538,7 @@ LINE2_MATERIALS.push(selectedGlowMat2);
     const uiElem = document.querySelector("#list");
     const layers = [
       { kind: "asc", key: "tree", name: "Tree Cover in 2000" },
-      { kind: "asc", key: "gdpasc", name: "GDP 2000 (ASC)" }
+      { kind: "asc", key: "gdpasc", name: "GDP 2000" }
     ];
 
     async function selectLayer(layer) {

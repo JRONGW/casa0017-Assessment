@@ -23,7 +23,7 @@ body {
   --pill-gap: 16px;           /* distance of pills from viewport edge */
   --header-height: 88px;      /* header pill height */
   --footer-height: 56px;      /* footer pill height */
-
+  --title-offset: 80px; 
   --safe-top:    calc(var(--header-height) + var(--pill-gap));
   --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
 }
@@ -48,17 +48,34 @@ body {
   z-index: 9; /* under pill bars, above canvas */
 }
 
+
 /* Title (single line; sits below header, with page padding) */
-#title {
-  top: calc(var(--safe-top) + 8px);
-  left: var(--content-pad);
-  max-width: calc(100vw - 2 * var(--content-pad));
-  font-size: clamp(12px, 3.2vw, 30px);
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+#title{
+  top: calc(var(--safe-top) + var(--title-offset));
+  color: #dcdcdc;  
+  /* center a content frame that matches the pill width */
+  left: 77%;
+  transform: translateX(-50%);
+  width: var(--content-width);
+  padding: 0 var(--content-pad);
+
+  /* push the text block to the RIGHT within that frame */
+  margin-left: auto;          /* pushes it right */
+  max-width: 82ch;            /* nice readable line length */
+  text-align: right;
+
+  /* typography */
+  white-space: normal;        /* allow normal wrapping */
+  word-break: normal;         /* avoid per-letter breaks */
+  overflow-wrap: break-word;  /* wrap long words only if needed */
+  font-size: clamp(10px, 2.6vw, 16px);
+  line-height: 1.2;
 }
+#title .accent{
+  color: #c0c0c0;           /* accent color */
+  font-weight: 600;
+}
+
 
 /* Info list (below title, aligned with padding) */
 #currentInfo {
