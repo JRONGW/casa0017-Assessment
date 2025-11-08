@@ -1,92 +1,188 @@
- /* This is your main style file */
- html,
+/* =========================================
+   FONTS & RESET
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
 body {
-  height: 100%;
-  margin: 0;
-  color: #505050;
-  font-family: Georgia;
-  font-size: 26px;
-  line-height: 40px;
-}
-#c {
-  position: fixed;      /* pin it to the viewport */
-  inset: 0;             /* top:0 right:0 bottom:0 left:0 */
-  width: 100vw;
-  height: 100vh;
-  display: block;
-  z-index: 0;
-}
-
-#title {
-  position: absolute;
-  top: 20px;
-  width: 870px;
-  left: 20px;
-  background-color: rgba(85, 85, 85, 0);
-  border-radius: 3px;
-  font: 40px Georgia;
-  padding: 10px;
-}
-
-
-
-#currentInfo {
-  width: 700px;
-  position: absolute;
-  left: 20px;
-
-  /* push it farther down to clear the title */
-  top: clamp(120px, 8vh, 400px);
-
-  background-color: rgb(255, 255, 255,0);
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 20px;
-}
-
-
-#list {
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #1b3a36;
+  background: #f7f9fb;
+  line-height: 1.6;
   display: flex;
   flex-direction: column;
 }
 
-.year {
-  align-self: stretch;
-  font: 16px Georgia;
-  line-height: 26px;
-  height: 40px;
-  float: left;
-  width: 250px;
-  color: rgba(30, 30, 30, 0.4);
+/* =========================================
+   LAYOUT VARS
+   ========================================= */
+:root{
+  --content-pad: 32px;        /* horizontal padding for title/info/linkGroup */
+  --pill-gap: 16px;           /* distance of pills from viewport edge */
+  --header-height: 88px;      /* header pill height */
+  --footer-height: 56px;      /* footer pill height */
 
-  cursor: pointer;
-  -webkit-transition: all 0.1s ease-out;
+  --safe-top:    calc(var(--header-height) + var(--pill-gap));
+  --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
 }
 
-
-
-.year:hover,
-.year.active {
-  font-size: 23px;
-  color: #080808;
+/* =========================================
+   CANVAS (background)
+   ========================================= */
+#c {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0; /* behind all UI */
 }
 
-#linkGroup {
+/* =========================================
+   OVERLAYS (title, info list, bottom links)
+   ========================================= */
+#title, #currentInfo, #linkGroup {
   position: absolute;
-  left: 20px;
-  bottom: 16px;
+  z-index: 9; /* under pill bars, above canvas */
 }
 
-a {
-  color: #aaa;
+/* Title (single line; sits below header, with page padding) */
+#title {
+  top: calc(var(--safe-top) + 8px);
+  left: var(--content-pad);
+  max-width: calc(100vw - 2 * var(--content-pad));
+  font-size: clamp(22px, 3.2vw, 40px);
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Info list (below title, aligned with padding) */
+#currentInfo {
+  top: calc(var(--safe-top) + 72px);
+  left: var(--content-pad);
+  width: min(720px, calc(100vw - 2 * var(--content-pad)));
+  background: transparent;
+  border-top: none;
+  padding: 16px 20px 0 20px;
+}
+
+/* Layer list items (built by JS) */
+#list { list-style: disc; margin-left: 24px; padding-left: 0; }
+#list .year {
+  list-style: disc;
+  font-size: 20px;
+  line-height: 1.6;
+  color: rgba(0,0,0,0.38);
+  cursor: pointer;
+  transition: color .15s ease, font-size .1s ease;
+}
+#list .year:hover,
+#list .year.active { color:#111; font-size:23px; }
+
+/* Bottom link row (above footer, same page padding) */
+#linkGroup {
+  left: var(--content-pad);
+  right: var(--content-pad);
+  bottom: calc(var(--safe-bottom) + 8px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#linkGroup a {
+  color: #9aa0a6;
+  text-decoration: none;
+  transition: color .2s ease;
+  font-weight: 500;
+}
+#linkGroup a:hover { color: #ffd24d; text-decoration: none; }
+#linkGroup a.timeline { margin-left: auto; }
+#divider { width: 1px; height: 18px; background: #bdbdbd; }
+
+/* Global link fallback */
+a { color: #9aa0a6; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* =========================================
+   PILL HEADER & FOOTER
+   ========================================= */
+.pill-bar{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, calc(100vw - 64px));
+  padding: 0 28px;
+  display: flex;
+  align-items: center;     /* vertically centers contents */
+  background: #eff2dd;     /* light tone */
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  z-index: 20;
+}
+
+/* Header pill */
+.pill-bar.header{
+  top: var(--pill-gap);
+  height: var(--header-height);
+  border-radius: calc(var(--header-height) / 2);
+}
+
+/* Footer pill (shorter) */
+.pill-bar.footer{
+  bottom: var(--pill-gap);
+  height: var(--footer-height);
+  border-radius: calc(var(--footer-height) / 2);
+}
+
+.pill-inner{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pill-inner .left, .pill-inner .right { width: 40px; }
+
+/* === Stack site title over nav INSIDE the pill header === */
+.pill-inner .center{
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;   /* <-- makes nav go under the title */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.pill-inner .center .site-title{ margin: 0; line-height: 1.15; }
+.pill-inner .center .site-nav{
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pill-inner .center .site-nav a{
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1b3a36;
   text-decoration: none;
 }
+.pill-inner .center .site-nav a:hover{ text-decoration: underline; }
 
-a:hover {
-  text-decoration: underline;
-}
 
-#divider {
-  border: 1px solid #aaa;
-  display: inline;
-  margin: auto 8px;
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 640px){
+  :root{
+    --content-pad: 16px;
+    --pill-gap: 12px;
+    --header-height: 80px;
+    --footer-height: 20px;
+    --safe-top:    calc(var(--header-height) + var(--pill-gap));
+    --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
+  }
+  .pill-bar{ width: calc(100vw - 24px); padding: 0 20px; }
+  .pill-inner .left, .pill-inner .right { width: 28px; }
+  .pill-inner .center .site-nav{ gap: 12px; }
 }
