@@ -8,7 +8,7 @@ html, body { height: 100%; }
 
 body {
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: #ffffff;
+  color: #333333;
   background: #f7f9fb;
   line-height: 1.6;
   display: flex;
@@ -52,7 +52,7 @@ body {
 /* Title (single line; sits below header, with page padding) */
 #title{
   top: calc(var(--safe-top) + var(--title-offset));
-  color: #dcdcdc;  
+  color: #333333;  
   /* center a content frame that matches the pill width */
   left: 77%;
   transform: translateX(-50%);
