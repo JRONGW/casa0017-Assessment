@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Line Graph</title>
+    <meta charset="UTF-8" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
+<script>
+  // For Chart.js v4 and chartjs-plugin-annotation v3+
+  if (window['chartjs-plugin-annotation']) {
+    const annotationPlugin = window['chartjs-plugin-annotation'];
+    Chart.register(annotationPlugin);
+    console.log('Annotation plugin registered:', annotationPlugin.id);
+  } else {
+    console.error('Annotation plugin not found!');
+  }
+</script>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div>
+    <canvas id="canvasChart" width="800" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>></canvas>
+    </div>
+    <button onclick="showAllData()">Show All Data</button>
+
+</body>
+  
+<script type="text/javascript" src="js/utils/lineGraph.js"></script>
+</html>

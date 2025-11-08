@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 export default defineConfig({
-  root: 'front-end',
+  root: 'client',
   publicDir: 'public'
 });

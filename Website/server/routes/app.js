@@ -122,6 +122,48 @@ app.get("/api/indicators", async (req, res, next) => {
   }
 });
 
+app.get("/api/indicators", async (req, res, next) => {
+  try {
+    const rows = await db.all(
+      "SELECT code, name, unit, igroup FROM indicator ORDER BY igroup, code"
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Get all policy indicators and their start year for a country
+app.get("/api/country/:iso3/policies", async (req, res, next) => {
+  try {
+    const { iso3 } = req.params;
+
+    const rows = await db.all(
+      `
+      SELECT 
+        i.code AS indicator_code,
+        i.name AS indicator_name,
+        MIN(d.year) AS start_year
+      FROM datapoint d
+      JOIN indicator i ON i.id = d.indicator_id
+      JOIN country  c ON c.id = d.country_id
+      WHERE 
+        c.iso3 = ? 
+        AND i.igroup = 'policy'
+        AND d.value > 0
+      GROUP BY i.code, i.name
+      ORDER BY i.code
+      `,
+      [iso3]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 // get time series for a country + indicators
 app.get("/api/country/:iso3/series", async (req, res, next) => {
   const codes = (req.query.codes || "")
@@ -207,6 +249,27 @@ app.get("/api/country/:iso3/panel", async (req, res, next) => {
     next(err);
   }
 });
+
+// get GDP time series for a country
+app.get("/api/country/:iso3/gdp", async (req, res, next) => {
+  try {
+    const rows = await db.all(
+      `
+      SELECT c.name, d.year, d.value AS gdp
+      FROM datapoint d
+      JOIN indicator i ON i.id = d.indicator_id
+      JOIN country  c ON c.id = d.country_id
+      WHERE c.iso3 = ? AND i.code = 'NY.GDP.MKTP.CD'
+      ORDER BY d.year
+      `,
+      [req.params.iso3]
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 // error handler
 app.use((err, req, res, next) => {
