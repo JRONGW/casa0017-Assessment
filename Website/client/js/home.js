@@ -229,13 +229,16 @@ LINE2_MATERIALS.push(selectedGlowMat2);
   // Pick your label styling in one place
   const LABEL_FONT_SIZE = 16;
   const LABEL_FONT_WEIGHT = 200;      // 600  semi-bold; 400 = normal
+  const LABEL_FONT_FAMILY = `"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+
   const LABEL_WORLD_HEIGHT = 0.10;
   const LABEL_UNDERLINE_THICKNESS = 1;
   const LABEL_PADDING_X = 4, LABEL_PADDING_Y = 3;
 
   function drawLabelTexture(text, hovered = false) {
     const colors = hovered ? LABEL_HOVER : LABEL_NORMAL;
-    const font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px Georgia, serif`;
+    const font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px ${LABEL_FONT_FAMILY}`;
+
 
     const c = document.createElement("canvas");
     const ctx = c.getContext("2d");
@@ -669,4 +672,3 @@ LINE2_MATERIALS.push(selectedGlowMat2);
 }
 
 main();
-

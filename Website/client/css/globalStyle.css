@@ -1,3 +1,7 @@
+/* Import Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+
 /* -------------------- */
 /* RESET (makes browsers consistent) */
 /* -------------------- */
@@ -8,7 +12,7 @@
 }
 
 body {
-  font-family: 'Copperplate' ,'fantasy';
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background-color: #f7f9fb;
   color: rgb(1, 107, 97);
   line-height: 1.6;
