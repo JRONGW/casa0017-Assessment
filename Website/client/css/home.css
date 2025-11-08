@@ -8,7 +8,7 @@ html, body { height: 100%; }
 
 body {
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: #1b3a36;
+  color: #ffffff;
   background: #f7f9fb;
   line-height: 1.6;
   display: flex;
@@ -135,7 +135,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;     /* vertically centers contents */
   background: #eff2dd;     /* light tone */
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,.09);
   z-index: 20;
 }
 
@@ -181,7 +181,7 @@ a:hover { text-decoration: underline; }
 .pill-inner .center .site-nav a{
   font-size: 13.5px;
   font-weight: 600;
-  color: #1b3a36;
+  color: #969696;
   text-decoration: none;
 }
 .pill-inner .center .site-nav a:hover{ text-decoration: underline; }
