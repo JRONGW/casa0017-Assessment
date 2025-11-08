@@ -19,7 +19,7 @@ body {
    LAYOUT VARS
    ========================================= */
 :root{
-  --content-pad: 32px;        /* horizontal padding for title/info/linkGroup */
+  --content-pad: 180px;        /* horizontal padding for title/info/linkGroup */
   --pill-gap: 16px;           /* distance of pills from viewport edge */
   --header-height: 88px;      /* header pill height */
   --footer-height: 56px;      /* footer pill height */
@@ -53,8 +53,8 @@ body {
   top: calc(var(--safe-top) + 8px);
   left: var(--content-pad);
   max-width: calc(100vw - 2 * var(--content-pad));
-  font-size: clamp(22px, 3.2vw, 40px);
-  line-height: 1.15;
+  font-size: clamp(12px, 3.2vw, 30px);
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
