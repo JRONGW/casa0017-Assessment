@@ -12,16 +12,35 @@ var x = "blue",
     y = 3;
 var w, h;
 
-var maxDrawnX = 0;          // Track the maximum X coordinate drawn so far
-var drawnSegments = [];           // Store all drawn line segments
+var maxDrawnX = 0;
+var drawnSegments = [];
 var allLabels = [];
 var allValues = [];
 var policyData = [];
 
-
 var COUNTRIES = ["Brazil", "Poland", "South Korea"];
 var ISO3_BY_NAME = { "Brazil":"BRA", "Poland":"POL", "South Korea":"KOR" };
 
+// Register plugins ONCE at module level
+if (window['chartjs-plugin-annotation']) {
+  const annotationPlugin = window['chartjs-plugin-annotation'];
+  
+  Chart.register(
+    annotationPlugin,
+    {
+      id: 'preservedDrawingsAndDeviation',
+      afterDraw: (chart) => {
+        if (show_flag && drawnSegments.length > 0) {
+          drawDeviation(chart);
+        }
+        redrawUserLines();
+      }
+    }
+  );
+  
+} else {
+  console.error('Annotation plugin not found');
+}
 
 function init() {
     canvas = document.getElementById('canvasChart')
@@ -29,15 +48,6 @@ function init() {
     w = canvas.width;
     h = canvas.height
     console.log("w", w, "h", h)
-
-        if (window['chartjs-plugin-annotation']) {
-  Chart.register(window['chartjs-plugin-annotation']);
-}
-
-
-    canvas.addEventListener("mousemove", function (e) {
-        findxy('move', e)
-    }, false)
 
     canvas.addEventListener("mousemove", function (e) {
         findxy('move', e)
@@ -51,15 +61,14 @@ function init() {
     canvas.addEventListener('mouseout', function (e) {
         findxy('out', e)
     }, false)
-
 }
 
- // load data from API and process into DATA
 async function loadDATAFromAPI(){
   for (var i=0;i<COUNTRIES.length;i++){
     var name = COUNTRIES[1];
     var iso3 = ISO3_BY_NAME[name];
-    await fetchCountryGDP(iso3);}
+    await fetchCountryGDP(iso3);
+  }
 }
 
 async function fetchCountryGDP(iso3) {
@@ -68,17 +77,28 @@ async function fetchCountryGDP(iso3) {
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
-
-    allLabels = data.map(item => item.year);
-    allValues = data.map(item => item.gdp);
+    // Fetch policy start years first
+    policyData = await fetchPolicyStartYears(iso3);
+    
+    // Get all unique years from both GDP data and policies
+    const gdpYears = data.map(item => String(item.year));
+    const policyYears = policyData.map(p => String(p.start_year));
+    const allYears = [...new Set([...gdpYears, ...policyYears])].sort((a, b) => Number(a) - Number(b));
+    
+    // Create a map of year -> GDP value
+    const gdpByYear = {};
+    data.forEach(item => {
+      gdpByYear[String(item.year)] = item.gdp;
+    });
+    
+    // Build labels and values arrays including all years
+    allLabels = allYears;
+    allValues = allYears.map(year => gdpByYear[year] !== undefined ? gdpByYear[year] : null);
 
     console.log(`Fetched ${data.length} GDP entries for ${iso3}`);
-
-    // Fetch policy start years
-    policyData = await fetchPolicyStartYears(iso3);
-    // const policyYears = policyData.map(p => p.start_year);
-    // console.log(`Policy start years for`, policyYears);
-
+    console.log(`Added ${policyYears.length} policy years to labels`);
+    console.log('Total labels:', allLabels.length);
+    
     graphUpdate(allLabels, allValues, policyData);
   } catch (err) {
     console.error('Error fetching GDP data:', err);
@@ -86,13 +106,11 @@ async function fetchCountryGDP(iso3) {
   }
 }
 
-
 async function fetchPolicyStartYears(iso3) {
   try {
     const response = await fetch(`http://localhost:3000/api/country/${iso3}/policies`);
     if (!response.ok) throw new Error('Failed to fetch policy start years');
     const data = await response.json();
-    // data = [{ indicator_code, indicator_name, start_year }, ...]
     return data;
   } catch (err) {
     console.error('Error fetching policy start years:', err);
@@ -100,13 +118,11 @@ async function fetchPolicyStartYears(iso3) {
   }
 }
 
-
 async function fetchPolicyData(iso3, indicatorCode) {
   try {
     const response = await fetch(`http://localhost:3000/api/country/${iso3}/series?codes=${indicatorCode}`);
     if (!response.ok) throw new Error('Failed to fetch policy data');
     const data = await response.json();
-    
     return data;
   } catch (err) {
     console.error('Error fetching policy data:', err);
@@ -114,23 +130,20 @@ async function fetchPolicyData(iso3, indicatorCode) {
   }
 }
 
-
 function erase() {
     var m = confirm("Redo Line?")
     if (m) {
         drawnSegments = [];
         maxDrawnX = window.lastPoint ? window.lastPoint.x : 0;
         show_flag = false;
-        graphUpdate(allLabels, allValues, policyData); // Pass policyData
+        graphUpdate(allLabels, allValues, policyData);
     }
 }
 
 function showAllData() {
     show_flag = true
-    graphUpdate(allLabels, allValues, policyData); // Pass policyData
+    graphUpdate(allLabels, allValues, policyData);
 }
-
-
 
 function graphUpdate(labels, values, policies = []) {
     if (chart) {
@@ -142,62 +155,78 @@ function graphUpdate(labels, values, policies = []) {
     if (show_flag) {
         displayValues = values;
     } else {
-        const quarterLength = Math.floor(values.length / 4);
-        displayValues = values.slice(0, quarterLength).concat(
-            new Array(values.length - quarterLength).fill(null)
+        displayValues = values.map((v, i) =>
+          i < values.length / 4 ? v : null
         );
     }
     
     const yMin = Math.min(...values);
     const yMax = Math.max(...values);
 
-    // Create annotations - with detailed logging
-    const annotations = {};
+    // Group policies by year
+    const policiesByYear = {};
     if (policies && policies.length > 0) {
-        policies.forEach((policy, idx) => {
-            const yearString = String(policy.start_year);
-          
-            annotations[`policy${idx}`] = {
-                type: 'line',
-                xMin: yearString,
-                xMax: yearString,
-                borderColor: 'rgb(255, 0, 0)',
-                borderWidth: 4,
-                borderDash: [8, 4],
-                label: {
-                    display: true,
-                    enabled: true,
-                    content: policy.indicator_name,
-                    position: 'start',
-                    yAdjust: -10,
-                    color: 'rgb(255, 0, 0)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    font: { 
-                        size: 11, 
-                        weight: 'bold',
-                        family: 'Arial'
-                    },
-                    padding: 8,
-                    borderRadius: 4
+        policies.forEach(policy => {
+            if (policy && policy.start_year !== undefined && policy.start_year !== null) {
+                const yearString = String(policy.start_year);
+                if (!policiesByYear[yearString]) {
+                    policiesByYear[yearString] = [];
                 }
-            };
+                policiesByYear[yearString].push(policy.indicator_name || 'Policy');
+            }
         });
     }
-    
-    // console.log("Final annotations object:", JSON.stringify(annotations, null, 2));
-    // console.log("Number of annotations:", Object.keys(annotations).length);
+    // Create annotations object
+    const policy_annotations = {};
 
+    // Create one annotation per unique year
+    Object.keys(policiesByYear).forEach((yearString, idx) => {
+        const policyNames = policiesByYear[yearString];
+        
+        policy_annotations[`policy${idx}`] = {
+            type: 'line',
+            xMin: yearString,
+            xMax: yearString,
+            borderColor: 'rgb(255, 0, 0)',
+            borderWidth: 1,
+            borderDash: [8, 4],
+            label: {
+                display: false, // Hidden by default
+                content: policyNames, // Array of all policy names for this year
+                position: 'start',
+                yAdjust: -100,
+                color: 'rgba(32, 101, 19, 1)',
+                backgroundColor: 'rgba(184, 201, 107, 1)',
+                font: { 
+                    size: 15, 
+                    weight: 'light',
+                    family: 'Poppins'
+                },
+                padding: 6,
+                borderRadius: 4
+            },
+            enter({element}) {
+                element.label.options.display = true;
+                return true;
+            },
+            leave({element}) {
+                element.label.options.display = false;
+                return true;
+            }
+        };
+    });
+        
     chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: "Brazil Excel Data",
+                label: "GDP Data",
                 data: displayValues,
                 fill: false,
-                borderColor: "rgba(23,99,86,0.9)",
+                borderColor: "rgba(23, 99, 86, 0.56)",
                 tension: 0.1,
-                spanGaps: false
+                spanGaps: true
             }]
         },
         options: {
@@ -209,7 +238,7 @@ function graphUpdate(labels, values, policies = []) {
                     type: 'category'
                 },
                 y: { 
-                    title: { display: true, text: 'Value' }, 
+                    title: { display: true, text: 'GDP' }, 
                     beginAtZero: true, 
                     min: yMin, 
                     max: yMax 
@@ -223,47 +252,32 @@ function graphUpdate(labels, values, policies = []) {
                     },
                     backgroundColor: (ctx) => {
                         const lastVisibleIdx = displayValues.findLastIndex(v => v !== null);
-                        return ctx.index === lastVisibleIdx ? "rgba(23,99,86,0.9)" : "rgba(52, 53, 53, 0.5)";
+                        return ctx.index === lastVisibleIdx ? "rgba(23,99,86,0.9)" : "rgba(163, 163, 163, 0.5)";
                     }
                 }
             },
             animation: false,
             interaction: {
                 mode: 'nearest',
-                intersect: true
+                intersect: false
             },
             plugins: {
                 tooltip: {
                     enabled: true
                 },
                 annotation: {
-                    annotations: annotations
+                    annotations: policy_annotations
                 },
                 legend: { display: false }
             }
         }
     });
 
-    // Check if annotations are registered after chart creation
- 
+    // Debug: Check what Chart.js sees
     setTimeout(() => {
-    console.log("Chart plugins:", chart.config.options.plugins);
-    console.log("Chart.registry.plugins:", Chart.registry.plugins);
-    console.log("Annotation plugin:", Chart.registry.getPlugin('annotation'));
-}, 100);
-
-    Chart.register({
-        id: 'preservedDrawingsAndDeviation',
-        afterDraw: (chart) => {
-            if (show_flag && drawnSegments.length > 0) {
-                drawDeviation(chart);
-            }
-            redrawUserLines();
-        }
-    });
-
-    
-    chart.update();
+        console.log('Chart x-axis labels:', chart.scales.x.ticks.map(t => t.label));
+        console.log('Chart x-axis min/max:', chart.scales.x.min, chart.scales.x.max);
+    }, 100);
 
     const meta = chart.getDatasetMeta(0);
     const lastVisibleIdx = displayValues.findLastIndex(v => v !== null);
@@ -277,8 +291,6 @@ function graphUpdate(labels, values, policies = []) {
     }
 }
 
-
-
 function drawDeviation(chart) {
     if(!chart || !drawnSegments.length) return
 
@@ -288,23 +300,18 @@ function drawDeviation(chart) {
     const drawnPoints = drawnSegments.map(seg => ({x: seg.x, y: seg.y}))
     const actualPoints  = meta.data.map(point => point.getProps(['x', 'y']))
 
-    // Overlapping x-ranges
     const drawnMinX = Math.min(...drawnPoints.map(p => p.x))
     const drawnMaxX = Math.max(...drawnPoints.map(p => p.x))
 
-    // Fill area between drawn lines and actual line
     for (let i = 0; i < actualPoints.length - 1; i++) {
         const actualPoint = actualPoints[i];
         const nextActualPoint = actualPoints[i + 1];
         
-        // Check if this segment overlaps with drawn area
         if (actualPoint.x >= drawnMinX && actualPoint.x <= drawnMaxX) {
-            // Find closest drawn points for this x position
             const drawnY = interpolateDrawnY(actualPoint.x, drawnPoints);
             const nextDrawnY = interpolateDrawnY(nextActualPoint.x, drawnPoints);
             
             if (drawnY !== null && nextDrawnY !== null) {
-                // Draw filled polygon for this segment
                 ctx.beginPath();
                 ctx.moveTo(actualPoint.x, actualPoint.y);
                 ctx.lineTo(nextActualPoint.x, nextActualPoint.y);
@@ -312,26 +319,21 @@ function drawDeviation(chart) {
                 ctx.lineTo(actualPoint.x, drawnY);
                 ctx.closePath();
                 
-                // Color based on whether prediction is above or below actual
                 const avgDrawn = (drawnY + nextDrawnY) / 2;
                 const avgActual = (actualPoint.y + nextActualPoint.y) / 2;
                 
                 if (avgDrawn < avgActual) {
-                    // Predicted higher (y axis is inverted)
-                    ctx.fillStyle = "rgba(255, 0, 0, 0.2)"; // Red for over-prediction
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
                 } else {
-                    // Predicted lower
-                    ctx.fillStyle = "rgba(0, 255, 0, 0.2)"; // Green for under-prediction
+                    ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
                 }
                 ctx.fill();
             }
         }
     }
-
 }
 
 function interpolateDrawnY(x, drawnPoints) {
-    // Find the two drawn points that bracket this x value
     let before = null, after = null;
     
     for (let i = 0; i < drawnPoints.length; i++) {
@@ -349,16 +351,13 @@ function interpolateDrawnY(x, drawnPoints) {
     if (!after) return before.y;
     if (before.x === after.x) return before.y;
     
-    // Linear interpolation
     const t = (x - before.x) / (after.x - before.x);
     return before.y + t * (after.y - before.y);
 }
 
 function redrawUserLines() {
     if (drawnSegments.length < 2) return
-    // {
-    //     drawnSegments.push({ x: window.lastPoint.x, y: window.lastPoint.y })
-    // } 
+    
     ctx.beginPath()
     ctx.moveTo(window.lastPoint.x, window.lastPoint.y)
 
@@ -369,13 +368,11 @@ function redrawUserLines() {
     ctx.lineWidth = 3
     ctx.stroke()
     
-    // Starting point
     ctx.beginPath()
     ctx.arc(window.lastPoint.x, window.lastPoint.y, 5, 0, 2 * Math.PI);
     ctx.fillStyle = "blue";
     ctx.fill();
 
-    // Ending point
     if(drawnSegments.length>0){
         const lastSeg = drawnSegments[drawnSegments.length -1]
         ctx.beginPath()
@@ -383,13 +380,12 @@ function redrawUserLines() {
         ctx.fillStyle = "blue";
         ctx.fill();
     }
-
 }
 
 function draw() {
     ctx.beginPath()
     ctx.moveTo(prevX, prevY)
-    ctx.lineTo(currX, currY)        // To (x, y) point  
+    ctx.lineTo(currX, currY)
     ctx.strokeStyle = x
     ctx.lineWidth = y
     ctx.stroke()
@@ -401,24 +397,18 @@ function draw() {
 
     ctx.closePath()
 
-    maxDrawnX = Math.max(maxDrawnX, currX);            // Update the maximum X position that has been drawn
+    maxDrawnX = Math.max(maxDrawnX, currX);
     drawnSegments.push({ x: currX, y: currY });
 }
-
 
 function findxy(res, e) {
      if (show_flag) return;
 
     if (res == 'down') {
-        // Mouse position
         currX = e.clientX - canvas.getBoundingClientRect().left
         currY = e.clientY - canvas.getBoundingClientRect().top
 
         if (currX >= maxDrawnX) {
-            // flag = true
-            // prevX = drawnSegments.length > 0 ? drawnSegments[drawnSegments.length - 1].x : window.lastPoint.x;
-            // prevY = drawnSegments.length > 0 ? drawnSegments[drawnSegments.length - 1].y : window.lastPoint.y;
-
             prevX = drawnSegments.length ? drawnSegments[drawnSegments.length - 1].x : window.lastPoint.x;
             prevY = drawnSegments.length ? drawnSegments[drawnSegments.length - 1].y : window.lastPoint.y;
 
@@ -428,7 +418,6 @@ function findxy(res, e) {
             if (dot_flag) {
                 draw()
                 dot_flag = false
-
             }
             else {
                 flag = false
@@ -442,8 +431,6 @@ function findxy(res, e) {
 
     if (res == 'move' && flag) {
         dot_flag = false
-        // prevX = window.lastPoint.x > currX ? window.lastPoint.x : currX;
-        // prevY = window.lastPoint.y > currY ? window.lastPoint.y : currY;
         currX = e.clientX - canvas.getBoundingClientRect().left
         currY = e.clientY - canvas.getBoundingClientRect().top
 
