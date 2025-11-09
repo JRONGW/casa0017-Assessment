@@ -242,7 +242,7 @@ function graphUpdate(labels, values, policies = []) {
                 point: {
                     radius: (ctx) => {
                         const lastVisibleIdx = displayValues.findLastIndex(v => v !== null);
-                        return ctx.index === lastVisibleIdx ? 8 : 2;
+                        return ctx.index === lastVisibleIdx ? 8 : 4
                     },
                     backgroundColor: (ctx) => {
                         const lastVisibleIdx = displayValues.findLastIndex(v => v !== null);
