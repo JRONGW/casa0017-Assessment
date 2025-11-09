@@ -26,6 +26,9 @@ body {
   --title-offset: 80px; 
   --safe-top:    calc(var(--header-height) + var(--pill-gap));
   --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
+  
+  --content-width: min(1180px, calc(100vw - 64px));
+  --title-shift: 160px;
 }
 
 /* =========================================
@@ -51,30 +54,53 @@ body {
 
 /* Title (single line; sits below header, with page padding) */
 #title{
-  top: calc(var(--safe-top) + var(--title-offset));
+
+  top: calc(var(--safe-top) + 5.5*var(--title-offset));
   color: #333333;  
-  /* center a content frame that matches the pill width */
-  left: 77%;
+  /* center a frame the same width as the pill bars */
+  left: calc(67% + var(--title-shift));
   transform: translateX(-50%);
   width: var(--content-width);
+
+  /* keep your side padding inside that frame */
   padding: 0 var(--content-pad);
 
-  /* push the text block to the RIGHT within that frame */
-  margin-left: auto;          /* pushes it right */
-  max-width: 82ch;            /* nice readable line length */
+  /* same text feel as before */
+  display: inline-block;
+  inline-size: min(62ch, 100%);
+  min-inline-size: 34ch; 
+  margin: 0;
+  max-width: 180ch;
   text-align: right;
 
-  /* typography */
-  white-space: normal;        /* allow normal wrapping */
-  word-break: normal;         /* avoid per-letter breaks */
-  overflow-wrap: break-word;  /* wrap long words only if needed */
-  font-size: clamp(10px, 2.6vw, 16px);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  font-size: clamp(12px, 2.6vw, 18px);
   line-height: 1.2;
+  hyphens: none;
 }
 #title .accent{
   color: #c0c0c0;           /* accent color */
   font-weight: 600;
 }
+/* Typewriter caret */
+
+#title .tw-ch {
+  visibility: hidden;       
+  display: inline;    
+}
+#title .tw-word { white-space: nowrap; display:inline; }
+#title .tw-space { visibility:visible !important; display:inline;} 
+
+
+/* blinking caret */
+#title .caret {
+  display: inline-block;
+  margin-left: 4px;
+  animation: caret-blink 1s step-end infinite;
+}
+@keyframes caret-blink { 50% { opacity: 0; } }
 
 
 /* Info list (below title, aligned with padding) */
@@ -222,12 +248,18 @@ a:hover { text-decoration: underline; }
 /* =========================================
    RESPONSIVE
    ========================================= */
-@media (max-width: 640px){
+@media (max-width: 700px){
+  #title{
+    inline-size: calc(100% - 3 * var(--content-pad)); /* full width inside padding */
+    min-inline-size: 21ch;       /* still avoids 1–2 char lines */
+    text-align: center;          /* optional: looks nicer on phones */
+  }
+  
   :root{
     --content-pad: 16px;
-    --pill-gap: 12px;
-    --header-height: 80px;
-    --footer-height: 52px;
+    --title-offset: 56px;
+    --title-shift: 0px;
+    --content-width: calc(100vw - 24px);
     --safe-top:    calc(var(--header-height) + var(--pill-gap));
     --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
   }
@@ -235,3 +267,7 @@ a:hover { text-decoration: underline; }
   .pill-inner .left, .pill-inner .right { width: 28px; }
   .pill-inner .center .site-nav{ gap: 12px; }
 }
+
+/* @media (max-width: 1200px){ :root{ --title-shift: 90px; } }
+@media (max-width: 900px) { :root{ --title-shift: 30px; } }
+@media (max-width: 760px) { :root{ --title-shift: 0px;  --content-pad: 24px; } } */
