@@ -17,13 +17,13 @@ body {
   align-items: center;
 }
 
-body {
+/* body {
   height: auto !important; 
-}
+} */
 
 .content{
     padding: 40px;
-    background-color: rgb(236, 246, 220);
+    background-color: rgb(195, 190, 209);
 }
 /* Title */
 h2#countryName {
