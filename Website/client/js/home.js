@@ -21,7 +21,7 @@ import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 
 
 /* ---------------- Tweens ---------------- */
-class TweenManger {
+class TweenManager {
   constructor() { this.numTweensRunning = 0; }
   _handleComplete() { --this.numTweensRunning; console.assert(this.numTweensRunning >= 0); }
   createTween(targetObject) {
@@ -43,7 +43,7 @@ function main() {
   let renderRequested = false;
   const canvas = document.querySelector("#c");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  const tweenManager = new TweenManger();
+  const tweenManager = new TweenManager();
 
   const fov = 60, aspect = 2, near = 0.1, far = 10;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -162,7 +162,6 @@ function main() {
     blending: THREE.AdditiveBlending, depthWrite: false
   });
   // groups
-  countryOutlineGroup.rotation.y = Math.PI * -0.5;
   scene.add(countryOutlineGroup);
 
   // NEW: a second group thatâ€™s slightly larger to fake a halo
@@ -174,7 +173,6 @@ function main() {
 
   // global boundaries stay subtle
 
-  globalBoundariesGroup.rotation.y = Math.PI * -0.5;
   scene.add(globalBoundariesGroup);
 
   // materials
@@ -201,7 +199,7 @@ function main() {
     depthWrite: false
   });
 
-  // â€œthinâ€ crisp outline (in screen pixels, independent of zoom)
+  // thin crisp outline (in screen pixels, independent of zoom)
 const selectedOutlineMat2 = new LineMaterial({
   color: 0x0f0f0f,
   transparent: true,
@@ -659,6 +657,29 @@ LINE2_MATERIALS.push(selectedGlowMat2);
   window.addEventListener("resize", dispatchUI, false);
   controls.addEventListener("change", dispatchUI);
 
+  // revealStep(): skip spaces (they're already visible)
+  function revealStep() {
+    if (stopped) return;
+    if (i >= chars.length) { if (!caretStays) caret.remove(); return; }
+
+    const current = chars[i];
+    if (current.classList.contains('tw-space')) {
+      i++;
+      setTimeout(revealStep, speed);
+      return;
+    }
+
+    current.style.visibility = 'visible';
+    i++;
+
+    const prevChar = current.textContent || '';
+    const pause = /[.,;:!?]/.test(prevChar) ? speed * punctuationSlowdown : speed;
+
+    if (typeof requestRenderIfNotRequested === 'function') requestRenderIfNotRequested();
+    setTimeout(revealStep, pause);
+  }
+
+
   function requestRenderIfNotRequested() {
     if (!renderRequested) { renderRequested = true; requestAnimationFrame(render); }
   }
@@ -669,6 +690,161 @@ LINE2_MATERIALS.push(selectedGlowMat2);
     mouse.x = x * 2 - 1;
     mouse.y = -y * 2 + 1;
   }
+
+
+  // ---- Typewriter that preserves markup, groups spaces, slows on punctuation ----
+  function typewriterTitleKeepMarkup(selector = '#title', speed = 35, delay = 300, opts = {}) {
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    const {
+      caretStays = true,            // set to false to remove caret at end
+      punctuationSlowdown = 2.5,    // multiplier after . , ; : ! ?
+      revealSpacesTogether = true,  // reveal consecutive spaces as 1 step
+    } = opts;
+
+    // Respect reduced-motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const originalHTML = el.innerHTML.trim();
+
+    // Wrap text nodes into <span class="tw-ch"> per character
+    function wrapNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const frag = document.createDocumentFragment();
+        const text = node.nodeValue;
+
+        let i = 0;
+        while (i < text.length) {
+          const isSpace = text[i] === ' ';
+          let j = i + 1;
+          while (j < text.length && (text[j] === ' ') === isSpace) j++;
+          const chunk = text.slice(i, j);
+
+          if (isSpace) {
+            // one span for the whole space run; keeps them visible & as breakpoints
+            const sp = document.createElement('span');
+            sp.className = 'tw-ch tw-space';
+            sp.textContent = ' ';                 // normal space (allows wrapping)
+            frag.appendChild(sp);
+          } else {
+            // wrap a whole WORD so letters inside never break across lines
+            const word = document.createElement('span');
+            word.className = 'tw-word';
+            for (let k = 0; k < chunk.length; k++) {
+              const ch = document.createElement('span');
+              ch.className = 'tw-ch';
+              ch.textContent = chunk[k];
+              word.appendChild(ch);
+            }
+            frag.appendChild(word);
+          }
+          i = j;
+        }
+        return frag;
+      }
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const clone = node.cloneNode(false);
+        for (let child = node.firstChild; child; child = child.nextSibling) {
+          clone.appendChild(wrapNode(child));
+        }
+        return clone;
+      }
+      return document.createDocumentFragment();
+    }
+
+
+    // Build wrapped fragment
+    const tmp = document.createElement('div');
+    tmp.innerHTML = originalHTML;
+
+    const wrapped = document.createDocumentFragment();
+    for (let child = tmp.firstChild; child; child = child.nextSibling) {
+      wrapped.appendChild(wrapNode(child));
+    }
+
+    // Mount wrapped + caret
+    el.innerHTML = '';
+    el.appendChild(wrapped);
+
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    caret.textContent = '|';
+    el.appendChild(caret);
+
+    const chars = Array.from(el.querySelectorAll('.tw-ch'));
+    if (!chars.length) { el.innerHTML = originalHTML; return; }
+
+    // Reveal loop
+    let i = 0;
+    let stopped = false;
+
+    function isPunct(ch) {
+      return /[.,;:!?]/.test(ch);
+    }
+
+    function revealStep() {
+      if (stopped) return;
+      if (i >= chars.length) {
+        if (!caretStays) caret.remove();
+        return;
+      }
+
+      const current = chars[i];
+      current.style.visibility = 'visible';
+
+      // If we’re inside a run of spaces, reveal the whole run at once
+      if (current.dataset.space === '1') {
+        let j = i + 1;
+        while (j < chars.length && chars[j].dataset.space === '1') {
+          chars[j].style.visibility = 'visible';
+          j++;
+        }
+        i = j;
+      } else {
+        i++;
+      }
+
+      // Slow slightly after punctuation to feel more natural
+      const prevChar = current.textContent || '';
+      const pause = isPunct(prevChar) ? speed * punctuationSlowdown : speed;
+
+      // if your canvas needs a nudge, request a render
+      if (typeof requestRenderIfNotRequested === 'function') {
+        requestRenderIfNotRequested();
+      }
+
+      setTimeout(revealStep, pause);
+    }
+
+    // Optional external API
+    el.typewriter = {
+      restart(newSpeed = speed, newDelay = delay) {
+        stopped = true;
+        chars.forEach(ch => { ch.style.visibility = 'hidden'; });
+        i = 0; stopped = false;
+        if (!caret.isConnected) el.appendChild(caret);
+        setTimeout(revealStep, newDelay);
+      },
+      stop() { stopped = true; },
+    };
+
+    setTimeout(revealStep, delay);
+  }
+
+  window.addEventListener('load', () => {
+  typewriterTitleKeepMarkup('#title', 28, 200, {
+    caretStays: true,              // set to false if you want caret to disappear
+    punctuationSlowdown: 2.2,      // subtle pause after punctuation
+    revealSpacesTogether: true,     // keeps spacing smooth
+  });
+});
+
+
+
 }
 
 main();
