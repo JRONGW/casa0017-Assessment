@@ -139,7 +139,7 @@ body.compact{
 .footer-links a:hover{ text-decoration: underline; }
 .footer-links .divider{ opacity: .45; user-select: none; }
 
-/* Helper if you ever disable .compact on <body> */
+/* Helper if ever disable .compact on <body> */
 .page-safe{ padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
 
 /* =========================================================

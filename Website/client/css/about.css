@@ -1,45 +1,186 @@
+/* =========================
+   ROOT VARS (shared)
+   ========================= */
+:root{
+  /* Typography */
+  --font-sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 
-/* Visually hidden for headings we still want in the a11y tree */
-.visually-hidden {
+  /* Pill bars (header/footer) */
+  --pill-gap: 16px;
+  --header-height: 88px;
+  --footer-height: 56px;
+
+  /* Safe padding below fixed bars */
+  --safe-top:    calc(var(--header-height) + var(--pill-gap));
+  --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
+
+  /* Compact breathing room */
+  --compact-top-gap: 8px;  /* space from header pill to content */
+  --compact-btm-gap: 8px;  /* space from content to footer pill */
+
+  /* Title frame alignment (same frame used by #title) */
+  --content-width: min(1180px, calc(100vw - 64px));
+  --title-shift: 80px;
+}
+
+/* =========================
+   BODY SAFE AREAS
+   ========================= */
+body.compact{
+  margin: 0;
+  background: #fff;
+  color: #222;
+  line-height: 1.55;
+  padding-top:  calc(var(--safe-top) + var(--compact-top-gap));
+  padding-bottom: calc(var(--safe-bottom) + var(--compact-btm-gap));
+  font-family: var(--font-sans);
+}
+
+/* Optional helper when not using .compact */
+.page-safe{ padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+
+/* =========================
+   PILL HEADER & FOOTER
+   ========================= */
+.pill-bar{
+  position: fixed;
+  left: 50%;  /* align to the same frame as #title */
+  transform: translateX(-50%);
+  width: var(--content-width);           /* same frame width as #title */
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  background: #eff2dd;
+  box-shadow: 0 2px 12px rgba(0,0,0,.09);
+  z-index: 20;
+  border-radius: 999px;
+}
+
+.pill-bar.header{
+  top: var(--pill-gap);
+  height: var(--header-height);
+  border-radius: calc(var(--header-height)/2);
+}
+
+.pill-bar.footer{
+  bottom: var(--pill-gap);
+  height: var(--footer-height);
+  border-radius: calc(var(--footer-height)/2);
+}
+
+.pill-inner{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pill-inner .left, .pill-inner .right { width: 40px; }
+
+.pill-inner .center{
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;   /* <-- makes nav go under the title */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+
+.pill-inner .center .site-title{
+  margin: 0;
+  line-height: 1.15;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pill-inner .center .site-nav{
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pill-inner .center .site-nav a{
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #969696;
+  text-decoration: none;
+}
+.pill-inner .center .site-nav a:hover{ text-decoration: underline; }
+.pill-inner .center .site-nav a[aria-current="page"]{
+  color: #2a2a2a; text-decoration: underline;
+}
+
+
+.pill-inner .left, .pill-inner .right { width: 28px; }
+.pill-inner .center .site-nav{ gap: 12px; }
+
+/* Footer center: title + links row */
+.pill-bar.footer .center{ display: flex; flex-direction: column; gap: 2px; }
+.footer-title{ font-weight: 1000; }
+.footer-links{ display: flex; align-items: center; gap: 6px; }
+.footer-links a{ text-decoration: none; color: #aeaeae; font-weight: 500; }
+.footer-links a:hover{ text-decoration: underline; }
+.footer-links .divider{ opacity: .45; user-select: none; }
+
+/* =========================
+   ABOUT PAGE
+   ========================= */
+.visually-hidden{
   position: absolute; width: 1px; height: 1px;
   margin: -1px; padding: 0; overflow: hidden;
   clip: rect(0 0 0 0); border: 0;
 }
 
-.about-hero {
-  margin-top: 6rem;
+/* Remove duplicate margins; safe-top already creates spacing */
+.about-hero{
   max-width: 1000px;
-  margin: 6rem auto 2rem;
+  margin: 2rem auto;   /* single margin declaration */
   padding: 0 1rem;
   text-align: center;
 }
 .about-hero h1 { font-size: 2rem; margin-bottom: 0.25rem; }
 .about-hero .about-tagline { opacity: 0.8; }
 
-.team-container {
+.team-container{
   max-width: 1100px;
   margin: 2rem auto 6rem;
   padding: 0 1rem;
-
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
 }
 
-.team-member {
+.team-member{
   background: var(--card-bg, #fff);
   border-radius: 1rem;
   box-shadow: 0 6px 24px rgba(0,0,0,0.06);
   padding: 1rem 1rem 1.25rem;
   text-align: center;
 }
-
-.team-member img {
+.team-member img{
   width: 120px; height: 120px; object-fit: cover;
   border-radius: 50%;
-  margin: 0.5rem auto 0.75rem;
-  display: block;
+  margin: 0.5rem auto 0.75rem; display: block;
 }
+.member-name{ font-size: 1.05rem; margin-bottom: 0.25rem; }
+.member-role{ font-size: 0.95rem; opacity: 0.8; }
 
-.member-name { font-size: 1.05rem; margin-bottom: 0.25rem; }
-.member-role { font-size: 0.95rem; opacity: 0.8; }
+/* =========================
+   MOBILE TWEAKS
+   ========================= */
+@media (max-width: 700px){
+  :root{
+    --content-width: calc(100vw - 24px);
+    --title-shift: 0px;                 /* match mobile title alignment */
+  }
+  .pill-bar{
+    left: 50%;                          /* center on mobile */
+    transform: translateX(-50%);
+    width: var(--content-width);
+    padding: 0 20px;
+  }
+  .pill-inner .left, .pill-inner .right { width: 28px; }
+  .pill-inner .center .site-nav{ gap: 12px; }
+}
