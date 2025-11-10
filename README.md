@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-TBD-blue.svg)](#-license)
 [![Made with Love](https://img.shields.io/badge/Made%20with-💚-success)](#-team)
 
-**Equilibrium** is an interactive, data-driven platform that helps users explore how economic growth can be pursued **without** compromising environmental protections—surfacing the **trade-offs**, **synergies**, and **paths** toward balanced development.Equilibrium transforms fragmented and static data into digestiable framework by harnessing data visualisation tools that allows for users to anaylse and interpret the data in a dynamic manner.
+**Equilibrium** is an interactive, data-driven platform that helps users explore how economic growth can be pursued **without** compromising environmental protections—surfacing the **trade-offs**, **synergies**, and **paths** toward balanced development.Equilibrium transforms fragmented and static  economic and enviromental data into digestiable framework by harnessing data visualisation tools that allows for users to anaylse and interpret the data in a dynamic manner.
 
 ---
 
