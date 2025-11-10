@@ -8,6 +8,7 @@ dot_flag = false;
 var show_flag = false;
 
 const dpr = window.devicePixelRatio || 1;
+const data = await fetchJSON(`/api/country/${iso3}/gdp`);
 
 var x = "rgba(248, 123, 231, 1)",
     y = 3;

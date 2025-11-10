@@ -36,6 +36,19 @@ var GDP_MAX = -Infinity;
 var DATA = {}; 
 var ISO3_BY_NAME = { "Brazil":"BRA", "Poland":"POL", "South Korea":"KOR" };
 
+async function fetchJSON(url, init) {
+  const res = await fetch(url, init);
+  const ct = res.headers.get("content-type") || "";
+  const text = await res.text(); 
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} @ ${url}\n${text.slice(0, 200)}`);
+  }
+  if (!ct.includes("application/json")) {
+    throw new Error(`Expected JSON but got ${ct} @ ${url}\nPreview: ${text.slice(0, 200)}`);
+  }
+  return JSON.parse(text);
+}
+
 // tools: min/max + normalize 0~1
 function _minmax(arr){
   var min=Infinity,max=-Infinity;

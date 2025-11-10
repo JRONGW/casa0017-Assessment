@@ -139,6 +139,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ SQLite API running at http://localhost:${PORT}`);
+  console.log(`✅ SQLite API running at http://${PORT}`);
 });
 
