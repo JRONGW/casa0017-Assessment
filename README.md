@@ -53,11 +53,11 @@
 -    Use nvm (Node Version Manager) if possible.
 ### Install nvm (macOS / Linux)
 #### macOS / Linux
-- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+-     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 #### restart your terminal, then:
-- nvm install 20
-- nvm use 20
-- node -v   # should show v20.x
+-     nvm install 20
+-     nvm use 20
+-     node -v   # should show v20.x
 ### Windows (PowerShell) – use nvm-windows
 - Install: https://github.com/coreybutler/nvm-windows
 - Then:
@@ -68,7 +68,7 @@
 -     git clone <your-fork-or-repo-url>.git
 -     cd casa0017-Assessment/Website
 3) Install dependencies
-- npm install
+-     npm install
 4) Run the dev server
 -     npm run dev
 -     Then open the printed local URL (typically http://localhost:5173/).
