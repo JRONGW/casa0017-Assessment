@@ -1,72 +1,79 @@
 # CASA0017 Web Assessment ReadMe File
 
-# DELETE THE LAST LINE AND REPLACE THIS LINE WITH YOUR WEBSITE NAME 
+# 🌍 Equilibrium — CASA0017 Web Assessment
 
-This is the Final assessment template for CASA0017 - Please use this template and edit the relevant sections to personalise.
-This section has a short introduction to what the website is about and what research problem the site is solving.  Remeber this file showcases your website source code so use it to sell what you can do as a group or showcase in a future portfolio. 
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Three.js](https://img.shields.io/badge/Three.js-latest-black?logo=three.js&logoColor=white)](https://threejs.org/)
+[![Chart.js](https://img.shields.io/badge/Chart.js-4.x-FF6384?logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
+[![License](https://img.shields.io/badge/License-TBD-blue.svg)](#-license)
+[![Made with Love](https://img.shields.io/badge/Made%20with-💚-success)](#-team)
 
-## Use this README File 
+**Equilibrium** is an interactive, data-driven platform that helps users explore how economic growth can be pursued **without** compromising environmental protections—surfacing the **trade-offs**, **synergies**, and **paths** toward balanced development.
 
-Use this section to show us what your Website is about.   Include a Screenshot to the Website in this README file, link to the various frameworks you've used.  If you want to show off your website you can add a Gif of you interacting with your site.   Emojis are also fun to include as well 😄
+---
 
-Look at some other Websites online in GitHub and see how they use the README File to showcase thier site.  Good examples are:
+## ✨ Demo
 
-- https://github.com/smaranjitghose/awesome-portfolio-websites
-- https://github.com/gohugoio/hugo    
-- https://github.com/academicpages/academicpages.github.io
+> 🎥 **Watch the demo**  
+> https://github.com/user-attachments/assets/874ed74e-03c5-4d06-899f-7dd907c5bfd0
 
-##  Replace the Tags on the side menu of GitHub
+---
 
-Put some tags in to make your site more searchable in GitHub
+## 🧭 Features
 
-## Include A Section That Tells Developers How To Install The App
+- **3D interactive visuals** powered by **Three.js** for geographic/contextual exploration  
+- **Dynamic charts** with **Chart.js** for comparative, time-series insight  
+- **Timeline slider & country switching** for quick scenario testing  
+- **Clean API layer** (Node.js/Express) to serve curated indicators  
+- **Modular data pipeline** to add indicators without changing UI logic  
+- **Accessible & responsive UI** designed for desktop and mobile
 
-Include a section that gives intructions on how to install the app or run it in Docker.  What versions of the plugins are you assuming?  Maybe define a licence as well, this is good practise.
+---
 
-##  Contact Details
+## 🧱 Tech Stack
 
-Having Contact Details is also good as it shows people how to get in contact with you if they'd like to contribute to the app. 
+- **Frameworks:** Node.js, Express (API), Vite (front-end dev)  
+- **Visualization:** Three.js, Chart.js  
+- **Data:** JSON/CSV (optionally SQLite)  
+- **Tooling:** ES Modules, npm scripts
+
+
+## 👥 Contact Details
+- **Lizzim24 https://github.com/Lizzim24
+- **ChengJu1 https://github.com/ChengJu1
+- **JRONGW https://github.com/JRONGW
+- **Ananyaucl https://github.com/Ananyaucl
+- **yussr19 https://github.com/yussr19
 
 ##  Installation
-### Prerequisites
+1) Prerequisites
 - Git
 - Node.js 20 LTS (recommended; works on Apple Silicon & Intel)
-- Vite
-- SQL Lite
+- SQLite3
 -    Use nvm (Node Version Manager) if possible.
-  
-### Install nvm
-##### macOS / Linux
+### Install nvm (macOS / Linux)
+#### macOS / Linux
 -     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-###### restart your terminal, then:
+#### restart your terminal, then:
 -     nvm install 20
 -     nvm use 20
 -     node -v   # should show v20.x
-##### Windows (PowerShell) – use nvm-windows
+### Windows (PowerShell) – use nvm-windows
 - Install: https://github.com/coreybutler/nvm-windows
 - Then:
 -     nvm install 20
 -     nvm use 20
 -     node -v
-### Clone
+2) Clone
 -     git clone <your-fork-or-repo-url>.git
-
-### Install dependencies
 -     cd casa0017-Assessment/Website
+3) Install dependencies
 -     npm install
-
-### Backend-Terminal1
--     cd casa0017-Assessment/Website/server
--     node db/init.js
--     node routes/app.js
-
-### Frontend-Terminal2
--     cd casa0017-Assessment/Website/client
-1) Run the dev server
+4) Run the dev server
 -     npm run dev
 -     Then open the printed local URL (typically http://localhost:5173/).
-2) Build for production
+5) Build for production
 -     npm run build
-3) Preview the production build (optional)
+6) Preview the production build (optional)
 -     npm run preview
 
