@@ -9,7 +9,7 @@ var show_flag = false;
 
 const dpr = window.devicePixelRatio || 1;
 
-var x = "blue",
+var x = "rgba(248, 123, 231, 1)",
     y = 3;
 var w, h;
 
