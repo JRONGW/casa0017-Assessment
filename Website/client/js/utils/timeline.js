@@ -27,7 +27,7 @@
   }
 };*/
 var COUNTRIES = ["Brazil", "Poland", "South Korea"];
-var WORLD_GEOJSON_URL = "/src/map.geojson";
+var WORLD_GEOJSON_URL = "./src/map.geojson";
 var GDP_MIN = Infinity;
 var GDP_MAX = -Infinity;
 
@@ -54,6 +54,15 @@ function _norm01(v,min,max){
 
 
 const API_BASE = "";
+
+// ---- fetch helper (add this just under API_BASE) ----
+async function fetchJSON(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} when fetching ${url}`);
+  }
+  return await res.json();
+}
 
 
 async function _fetchCountrySeries(iso3){
