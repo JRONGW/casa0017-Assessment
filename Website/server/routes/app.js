@@ -87,6 +87,7 @@ import express from "express";
 import cors from "cors";
 import { db } from "../db/config.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
@@ -94,6 +95,7 @@ app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const CLIENT_DIR = path.resolve(__dirname, "../../client");
 
 // health check
 app.get("/api/health", (req, res) => res.json({ ok: true }));
@@ -115,17 +117,6 @@ app.get("/api/countries", async (req, res, next) => {
 });
 
 // get all indicators
-app.get("/api/indicators", async (req, res, next) => {
-  try {
-    const rows = await db.all(
-      "SELECT code, name, unit, igroup FROM indicator ORDER BY igroup, code"
-    );
-    res.json(rows);
-  } catch (err) {
-    next(err);
-  }
-});
-
 app.get("/api/indicators", async (req, res, next) => {
   try {
     const rows = await db.all(
@@ -288,8 +279,8 @@ app.listen(3000, () =>
   console.log("✅ SQLite API running at http://localhost:3000")
 );
 
-app.use(express.static(path.resolve(__dirname, "../../client")));
+app.use(express.static(path.resolve(CLIENT_DIR)));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../../front-end/index.html"));
+  res.sendFile(path.resolve(CLIENT_DIR, "index.html"));
 });
