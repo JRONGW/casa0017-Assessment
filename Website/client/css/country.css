@@ -1,3 +1,22 @@
+/* =========================
+   PILL HEADER (no footer)
+   ========================= */
+
+/* Vars just for the header frame */
+:root{
+  --pill-gap: 16px;
+  --header-height: 88px;
+  --content-width: min(1180px, calc(100vw - 64px));
+  --header-pad-x: 28px;   /* desktop */
+
+  --content-pad: 180px;        /* horizontal padding for title/info/linkGroup */
+
+  --title-offset: 80px; 
+  --safe-top:    calc(var(--header-height) + var(--pill-gap));
+  --safe-bottom: calc(var(--footer-height) + var(--pill-gap));
+  
+  --title-shift: 160px;
+}
 /* General Reset and Base Styles */
 * {
   box-sizing: border-box;
@@ -6,7 +25,6 @@
 }
 
 body {
-  
   font-family: "Inter", Arial, sans-serif;
   background-color: #f9fafb;
   color: #222;
@@ -16,6 +34,65 @@ body {
   flex-direction: column;
   align-items: center;
 }
+/* Add this class to <body> so content clears the fixed header */
+body.with-pill{
+  /* keep your existing side padding (40px 20px) but lift content below the pill */
+  padding-top: calc(var(--header-height) + var(--pill-gap) + 8px);
+}
+
+
+/* The pill bar itself */
+.pill-bar{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, calc(100vw - 64px));
+  padding: 0 28px;
+  display: flex;
+  align-items: center;     /* vertically centers contents */
+  background: #eff2dd;     /* light tone */
+  box-shadow: 0 2px 12px rgba(0,0,0,.09);
+  z-index: 20;
+}
+
+/* Inner layout: (left) (center: title+nav) (right) */
+.pill-inner{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pill-inner .left, .pill-inner .right { width: 40px; }
+
+.pill-inner .center{
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;   /* <-- makes nav go under the title */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+
+.pill-inner .center .site-title{ margin: 0; line-height: 1.15; }
+.pill-inner .center .site-nav{
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pill-inner .center .site-nav a{
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #969696;
+  text-decoration: none;
+}
+.pill-inner .center .site-nav a:hover{ text-decoration: underline; }
+
+/* Tighten the page title since body padding now clears the pill */
+body.with-pill h2#countryName{ padding-top: 0; }
+
 
 /* body {
   height: auto !important; 
@@ -90,6 +167,12 @@ button:active {
 }
 
 /* Responsive Design */
+/* Mobile tweaks */
+@media (max-width: 700px){
+  :root{ --content-width: calc(100vw - 24px); --header-pad-x: 20px; }
+  .pill-inner .left, .pill-inner .right { width: 28px; }
+  .pill-inner .center .site-nav{ gap: 12px; }
+}
 @media (max-width: 900px) {
   body {
     padding: 20px;
