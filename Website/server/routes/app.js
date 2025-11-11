@@ -88,7 +88,10 @@ import cors from "cors";
 import { db } from "../db/config.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://10.129.111.5'],
+  credentials: true
+}));
 app.use(express.json());
 
 // health check
@@ -279,7 +282,7 @@ app.use((err, req, res, next) => {
     .json({ error: "internal_error", detail: err.message });
 });
 
-// start server
+// const PORT = process.env.PORT || 3000;
 app.listen(3000, () =>
   console.log("✅ SQLite API running at http://localhost:3000")
 );

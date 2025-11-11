@@ -20,6 +20,10 @@ var allValues = [];
 var policyData = [];
 
 
+const API_BASE_URL = window.location.hostname === 'localhost' && window.location.port === '5173'
+  ? 'http://localhost:3000'  // Development
+  : '';
+
 // Register plugins ONCE at module level
 if (window['chartjs-plugin-annotation']) {
   const annotationPlugin = window['chartjs-plugin-annotation'];
@@ -66,7 +70,7 @@ function init() {
 
 async function fetchCountryGDP(iso3) {
   try {
-    const response = await fetch(`http://localhost:3000/api/country/${iso3}/gdp`);
+    const response = await fetch(`${API_BASE_URL}/api/country/${iso3}/gdp`);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
@@ -101,7 +105,7 @@ async function fetchCountryGDP(iso3) {
 
 async function fetchPolicyStartYears(iso3) {
   try {
-    const response = await fetch(`http://localhost:3000/api/country/${iso3}/policies`);
+    const response = await fetch(`${API_BASE_URL}/api/country/${iso3}/policies`);
     if (!response.ok) throw new Error('Failed to fetch policy start years');
     const data = await response.json();
     return data;
@@ -113,7 +117,7 @@ async function fetchPolicyStartYears(iso3) {
 
 async function fetchPolicyData(iso3, indicatorCode) {
   try {
-    const response = await fetch(`http://localhost:3000/api/country/${iso3}/series?codes=${indicatorCode}`);
+    const response = await fetch(`${API_BASE_URL}/api/country/${iso3}/series?codes=${indicatorCode}`);
     if (!response.ok) throw new Error('Failed to fetch policy data');
     const data = await response.json();
     return data;

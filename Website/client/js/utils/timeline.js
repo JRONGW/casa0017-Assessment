@@ -53,7 +53,9 @@ function _norm01(v,min,max){
   return Math.max(0,Math.min(1,x));
 }
 
-const API_BASE = "http://localhost:3000";
+const API_BASE_URL = window.location.hostname === 'localhost' && window.location.port === '5173'
+  ? 'http://localhost:3000'  // Development
+  : '';
 
 // backend API fetch for a country's series data
 async function _fetchCountrySeries(iso3){
@@ -64,7 +66,7 @@ async function _fetchCountrySeries(iso3){
     'EN.ATM.CO2E.PC'      // CO2 -> co2 (lower is better)
   ].join(',');
 
-  var url = `${API_BASE}/api/country/${iso3}/series?codes=${encodeURIComponent(codes)}`;
+  var url = `${API_BASE_URL}/api/country/${iso3}/series?codes=${encodeURIComponent(codes)}`;
   var res = await fetch(url);
   if(!res.ok) throw new Error('API error: '+url);
   return await res.json();
