@@ -72,8 +72,9 @@
 4) Run the dev server
 -     npm run dev
 -     Then open the printed local URL (typically http://localhost:5173/).
-5) Build for production
+5) Build for production (/casa0017-Assessment/Website/..)
 -     npm run build
+-     npm start
 6) Preview the production build (optional)
 -     npm run preview
 
