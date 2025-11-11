@@ -32,14 +32,11 @@ const __dirname  = path.dirname(__filename);
 const ROOT    = path.resolve(__dirname, "..", "..");     // -> Website/
 const DB_PATH = path.join(ROOT,"server", "db", "eco_env.sqlite"); // <- SAME as seeder
 
-<<<<<<< Updated upstream
 sqlite3.verbose(); // helpful debugging logs
 
 console.log("🔗 SQLite path:", dbPath);
-=======
 
 console.log("🔗 Using DB:", DB_PATH);
->>>>>>> Stashed changes
 
 // Guard: warn if file missing or suspiciously small
 try {

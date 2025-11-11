@@ -421,7 +421,6 @@ function scale01(v, vmin, vmax){
 // ----- Money stacks (multi-line) -----
 const CASH_PER_ROW   = 12;    // how many notes per row
 const NOTE_SPACING_X = 20;   // horizontal overlap/spacing (px)
-<<<<<<< Updated upstream
 const NOTE_SPACING_Y = 38;   // vertical spacing between rows (px)
 const NOTE_WIDTH_PX  = 30;   // image width (you can match your CSS)
 
