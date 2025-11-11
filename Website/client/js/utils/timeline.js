@@ -424,10 +424,7 @@ const NOTE_SPACING_X = 20;   // horizontal overlap/spacing (px)
 <<<<<<< Updated upstream
 const NOTE_SPACING_Y = 38;   // vertical spacing between rows (px)
 const NOTE_WIDTH_PX  = 30;   // image width (you can match your CSS)
-=======
-const NOTE_SPACING_Y = 50;   // vertical spacing between rows (px)
-const NOTE_WIDTH_PX  = 40;   // image width (you can match your CSS)
->>>>>>> Stashed changes
+
 
 function updateCash(countryName, val01) {
   const id = idFromName(countryName);
