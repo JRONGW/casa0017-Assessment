@@ -4,11 +4,24 @@ import cors from "cors";
 import { db } from "../db/config.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import helmet from "helmet";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://unpkg.com"],
+      styleSrc:  ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc:   ["'self'", "https://fonts.gstatic.com"],
+      imgSrc:    ["'self'", "data:"],
+      connectSrc:["'self'"]
+    }
+  }
+}));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -152,7 +165,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "internal_error", detail: err.message });
 });
 
-<<<<<<< Updated upstream
+// ✅ serve vendor libs from node_modules
+app.use(
+  "/vendor",
+  express.static(path.join(__dirname, "..", "..", "node_modules"))
+);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ SQLite API running at http://localhost:${PORT}`);
@@ -160,19 +178,3 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`💡 Test API health: http://localhost:${PORT}/api/health`);
   console.log(`📂 Serving frontend from: ${CLIENT_DIR}`);
 });
-=======
-app.get('/api/health', (req, res) => {
-  // if you have a sqlite handle called `db`, you can quick-test it:
-  db.get('SELECT 1 as ok', (err, row) => {
-    if (err) return res.status(500).json({ ok: false, error: err.message });
-    res.json({ ok: true, db: row?.ok === 1 });
-  });
-});
-
-
-// start server
-app.listen(3000, () =>
-  console.log("✅ SQLite API running at http://localhost:3000")
-);
-
->>>>>>> Stashed changes

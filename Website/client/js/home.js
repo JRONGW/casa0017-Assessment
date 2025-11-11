@@ -1,6 +1,7 @@
 import "../css/home.css";
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+// Website/client/js/home.js
+import * as THREE from "/vendor/three/build/three.module.js";
+import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as TWEEN from "@tweenjs/tween.js";
