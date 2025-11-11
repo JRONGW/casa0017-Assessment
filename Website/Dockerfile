@@ -1,24 +1,18 @@
-# Use an LTS Node image
-FROM node:20-alpine
+FROM node:20-bookworm
+WORKDIR /app/Website
 
-# Install sqlite CLI (handy for debugging) and bash
-RUN apk add --no-cache sqlite bash
+# install sqlite CLI (optional)
+RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Copy package files first (better layer caching)
-COPY package*.json ./
-
-# Install deps (no dev deps in production image; keep if you need build tools)
+# install deps
+COPY Website/package*.json ./
 RUN npm ci --omit=dev
 
-# Copy the rest
-COPY . .
+# copy source
+COPY Website/. .
 
-# Environment
 ENV NODE_ENV=production
-# Default port your Express app listens on
 ENV PORT=3000
+EXPOSE 3000
 
-# Start the server
 CMD ["node", "server/routes/app.js"]
