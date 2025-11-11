@@ -1,9 +1,6 @@
 import "../css/home.css";
-// Website/client/js/home.js
-// stop using the CDN; use your own hosted files
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as TWEEN from "@tweenjs/tween.js";
 import * as turf from "@turf/turf";

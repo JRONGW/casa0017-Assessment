@@ -77,7 +77,7 @@ body.with-pill{
 }
 
 
-.pill-inner .center .site-title{ margin: 0; line-height: 1.15; }
+.pill-inner .center .site-title{ margin: 0; line-height: 1.15; font-weight: 600;}
 .pill-inner .center .site-nav{
   display: flex;
   gap: 16px;

@@ -3,30 +3,9 @@ import { open } from "sqlite";
 import csv from "csv-parser";
 import fs from "fs";
 
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// __dirname = Website/server/db
-const ROOT = path.resolve(__dirname, "..", ".."); // -> Website/
-
-const DB_FILE       = path.join(ROOT, "server","db", "eco_env.sqlite");              // SAME DB as server
-const COUNTRY_CSV   = path.join(__dirname, "..", "data", "meta", "country.csv");
-const INDICATOR_CSV = path.join(__dirname, "..", "data", "meta", "indicator.csv");
-const DATAPOINT_CSV = path.join(__dirname, "..", "data", "cleaned", "datapoint.csv");
-
-
-fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
-// Sanity checks
-for (const p of [COUNTRY_CSV, INDICATOR_CSV, DATAPOINT_CSV]) {
-  if (!fs.existsSync(p)) throw new Error("Missing CSV: " + p);
-}
-console.log("🌱 Seeding DB:", DB_FILE);
-console.log("📄 CSVs:", COUNTRY_CSV, INDICATOR_CSV, DATAPOINT_CSV);
-
-
+fs.mkdirSync("./db", { recursive: true });
 const db = await open({
-  filename: DB_FILE,
+  filename: "./db/eco_env.sqlite",
   driver: sqlite3.Database,
 });
 
@@ -88,7 +67,7 @@ function readCSVtoArray(file) {
 
 //import country.csv//
 {
-  const rows = await readCSVtoArray(COUNTRY_CSV);
+  const rows = await readCSVtoArray("./data/meta/country.csv");
   await db.exec("BEGIN;");
   const stmt = await db.prepare(
     `INSERT OR IGNORE INTO country (iso2, iso3, name) VALUES (?,?,?)`
@@ -107,7 +86,7 @@ function readCSVtoArray(file) {
 
 //import indicator.csv//
 {
-  const rows = await readCSVtoArray(INDICATOR_CSV);
+  const rows = await readCSVtoArray("./data/meta/indicator.csv");
   await db.exec("BEGIN;");
   const stmt = await db.prepare(
     `INSERT OR IGNORE INTO indicator (code, name, unit, igroup) VALUES (?,?,?,?)`
@@ -122,7 +101,7 @@ function readCSVtoArray(file) {
   }
   await stmt.finalize();
   await db.exec("COMMIT;");
-  console.log(`✅ ${INDICATOR_CSV} import successfully,  ${rows.length} rows processed.`);
+  console.log(`✅ ./data/meta/indicator.csv import successfully,  ${rows.length} rows processed.`);
 }
 
 //import datapoint.csv//
@@ -135,7 +114,7 @@ function readCSVtoArray(file) {
     (await db.all(`SELECT id, code FROM indicator`)).map(r => [String(r.code).trim(), r.id])
   );
 
-  const rows = await readCSVtoArray(DATAPOINT_CSV);
+  const rows = await readCSVtoArray("./data/cleaned/datapoint.csv");
   let ok = 0, skip = 0;
   const badSamples = [];
 
@@ -167,7 +146,7 @@ function readCSVtoArray(file) {
   await stmt.finalize();
   await db.exec("COMMIT;");
 
-  console.log(`✅ ${DATAPOINT_CSV} import successfully, inserted: ${ok}, skipped: ${skip}`);
+  console.log(`✅ ./data/cleaned/datapoint.csv import successfully, inserted: ${ok}, skipped: ${skip}`);
   if (badSamples.length) console.log("⚠️ sample skipped rows:", badSamples);
 
   const cnt = await db.get(`SELECT COUNT(*) AS n FROM datapoint`);

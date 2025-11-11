@@ -26,7 +26,7 @@
   --maps-gap: 3px;        /* gap between country maps */
 
   --cash-height: 60px;     /* compact money lane */
-  --cash-note-w: 28px;     /* money PNG width */
+  --cash-note-w: 58px;     /* money PNG width */
 
   /* Compact breathing room */
   --compact-top-gap: 8px;  /* space from header pill to content */

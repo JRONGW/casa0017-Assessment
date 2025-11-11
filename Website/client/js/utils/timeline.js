@@ -28,7 +28,7 @@
 };*/
 
 var COUNTRIES = ["Brazil", "Poland", "South Korea"];
-var WORLD_GEOJSON_URL = "/src/map.geojson";
+var WORLD_GEOJSON_URL = "./src/map.geojson";
 var GDP_MIN = Infinity;
 var GDP_MAX = -Infinity;
 
@@ -53,7 +53,7 @@ function _norm01(v,min,max){
   return Math.max(0,Math.min(1,x));
 }
 
-const API_BASE = "";
+const API_BASE = "http://localhost:3000";
 
 // backend API fetch for a country's series data
 async function _fetchCountrySeries(iso3){
@@ -424,7 +424,6 @@ const NOTE_SPACING_X = 20;   // horizontal overlap/spacing (px)
 const NOTE_SPACING_Y = 38;   // vertical spacing between rows (px)
 const NOTE_WIDTH_PX  = 30;   // image width (you can match your CSS)
 
-
 function updateCash(countryName, val01) {
   const id = idFromName(countryName);
   const el = document.getElementById("stack-" + id);
@@ -450,7 +449,7 @@ function updateCash(countryName, val01) {
     const col = i % CASH_PER_ROW;                  // 0..CASH_PER_ROW-1
 
     const img = document.createElement("img");
-    img.src = "/img/money.png";
+    img.src = "./img/money.png";
     img.className = "cash-note";
     // position: left-to-right, build upward
     img.style.left = (col * NOTE_SPACING_X) + "px";

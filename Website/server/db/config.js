@@ -18,8 +18,9 @@ try {
 } catch (err) {
   console.error("❌ database connect failed：", err.message);
 }*/
+
 import sqlite3 from "sqlite3";
-import { open } from "sqlite"; 
+import { open } from "sqlite";
 import path from "path";
 import { fileURLToPath } from "url";
 
