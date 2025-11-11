@@ -1,4 +1,4 @@
-// server/routes/app.js  
+// server/routes/app.js
 import express from "express";
 import cors from "cors";
 import { db } from "../db/config.js";
@@ -9,11 +9,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const CLIENT_DIR = path.resolve(__dirname, "../../client"); 
+const __dirname  = path.dirname(__filename);
 
+const CLIENT_DIR = path.resolve(__dirname, "../../dist");
+console.log("📂 Serving frontend from:", CLIENT_DIR);
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 
@@ -45,7 +45,7 @@ app.get("/api/country/:iso3/series", async (req, res, next) => {
       FROM datapoint d
       JOIN indicator i ON i.id = d.indicator_id
       JOIN country  c ON c.id = d.country_id
-      WHERE c.iso3 = ? AND i.code IN (` + placeholders + `)
+      WHERE c.iso3 = ? AND i.code IN (${placeholders})
       ORDER BY i.code, d.year
     `;
     const params = [req.params.iso3, ...codes];
@@ -67,7 +67,7 @@ app.get("/api/indicator/:code/slice", async (req, res, next) => {
       FROM datapoint d
       JOIN indicator i ON i.id = d.indicator_id
       JOIN country  c ON c.id = d.country_id
-      WHERE i.code = ? AND d.year = ? AND c.iso3 IN (` + placeholders + `)
+      WHERE i.code = ? AND d.year = ? AND c.iso3 IN (${placeholders})
       ORDER BY c.iso3
     `;
     const params = [code, year, ...list];
@@ -104,7 +104,6 @@ app.get("/api/country/:iso3/panel", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-
 app.get("/api/country/:iso3/gdp", async (req, res, next) => {
   try {
     const rows = await db.all(
@@ -139,8 +138,15 @@ app.get("/api/country/:iso3/policies", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+app.use("/api", (req, res) => {
+  res.status(404).json({ error: "not_found", path: req.originalUrl });
+});
 
-app.use(express.static(CLIENT_DIR)); 
+app.use(express.static(CLIENT_DIR, { extensions: ["html"] }));
+
+app.get(/.*\.html$/, (req, res) => {
+  res.sendFile(path.join(CLIENT_DIR, req.path.replace(/^\//, "")));
+});
 
 
 app.get("/", (req, res) => {
@@ -153,9 +159,15 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ SQLite API running at http://localhost:${PORT}`);
   console.log(`📡 Access from other devices: http://[YOUR_PI_IP]:${PORT}`);
   console.log(`💡 Test API health: http://localhost:${PORT}/api/health`);
-  console.log(`📂 Serving frontend from: ${CLIENT_DIR}`);
 });
+
+server.on("error", (err) => {
+  console.error("❌ Server error:", err);
+  process.exit(1);
+});
+
+process.stdin.resume();

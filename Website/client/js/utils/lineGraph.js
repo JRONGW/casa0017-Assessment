@@ -100,6 +100,10 @@ async function fetchCountryGDP(iso3) {
   }
 }
 
+
+window.init = init;
+window.fetchCountryGDP = fetchCountryGDP;
+
 async function fetchPolicyStartYears(iso3) {
   try {
     const response = await fetch(`${API_BASE}/api/country/${iso3}/policies`);
