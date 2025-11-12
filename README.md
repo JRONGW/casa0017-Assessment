@@ -45,6 +45,10 @@
 - **Ananyaucl https://github.com/Ananyaucl
 - **yussr19 https://github.com/yussr19
 
+## 👥 Sub-repository
+- **https://github.com/JRONGW/equilibrium
+- ***This is trying to deploy on a global server.
+
 ##  Installation
 1) Prerequisites
 - Git
